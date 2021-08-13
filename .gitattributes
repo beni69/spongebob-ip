@@ -1,0 +1,2 @@
+clips/jazz.mp3 filter=lfs diff=lfs merge=lfs -text
+clips/sp-*.png filter=lfs diff=lfs merge=lfs -text
