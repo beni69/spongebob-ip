@@ -25,7 +25,8 @@ app.use(cors());
 app.all("/test", (_, res) => res.send("hello"));
 
 app.get("/link", (req, res) => {
-    const { ip } = req;
+    // const { ip } = req;
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const { url, wh } = req.query;
 
     if (!(url && wh))
@@ -44,16 +45,11 @@ app.get("/link", (req, res) => {
         (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
-                res.send("there was an errror rendering the video\n" + err);
                 return;
             }
 
             console.log(`rendered file ${out}`);
-
-            // res.sendFile(joinPath(__dirname, out));
-
-            // const body={}
-            // fetch(wh as string,{method:"POST",})
+            console.log("stdout: " + stdout);
 
             const form = new FormData();
             form.append("username", "spongebob ip grabber");

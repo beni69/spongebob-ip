@@ -11,8 +11,11 @@ print(f"will write to file {out} with text {text}")
 audio = AudioFileClip("clips/jazz.mp3").set_duration(10)
 
 image_clip = ImageClip(img)
-text_clip = TextClip(txt=text, fontsize=100, font="Comic-Sans-MS",
-                     color="black", stroke_color="white", stroke_width=3).set_position("center")
+
+size = .8*image_clip.size[0]
+
+text_clip = TextClip(txt=text, size=(size, 0), font="Comic-Sans-MS",
+                     color="black", stroke_color="white", stroke_width=int(size/288)).set_position("center")
 
 clip = CompositeVideoClip(
     [image_clip, text_clip.set_start(6)]).set_duration(audio.duration)
