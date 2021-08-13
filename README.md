@@ -1,5 +1,8 @@
 # spongebob-ip
 
+### steal someone's ip in the funniest way possible
+[example video](https://cdn.discordapp.com/attachments/778203356765487134/875746622175338626/bs7aE.mp4)
+
 ## video.py
 this is where the magic happens.
 using moviepy, this script will get an image, a text, a song (hardcoded to *jazz in paris*) and put them all together into a file.
