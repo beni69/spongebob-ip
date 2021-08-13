@@ -25,6 +25,8 @@ const PORT = process.env.PORT || 8000,
 
 app.use(cors());
 
+app.use(express.static(joinPath(__dirname, "public")));
+
 app.get("/link", (req, res) => {
     let ip = (req.headers["x-forwarded-for"] ||
         req.socket.remoteAddress) as string;
@@ -32,7 +34,7 @@ app.get("/link", (req, res) => {
 
     if (!(url && wh))
         return res.send(
-            "provide a url to redirect to and a discord webhook link.<br>`/link?url=whatever&wh=12369420`"
+            'invalid parameters: generate a link <a href="/">here</a>'
         );
 
     if (ip.startsWith("::ffff:")) ip = ip.substring(7);
