@@ -1,10 +1,13 @@
 import { exec } from "child_process";
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import FormData from "form-data";
-import { createReadStream, rm, readdirSync } from "fs";
+import { createReadStream, readdirSync, rm } from "fs";
 import { nanoid } from "nanoid";
 import { join as joinPath } from "path";
+
+dotenv.config();
 
 const images = readdirSync(joinPath(__dirname, "clips")).filter(img =>
         /^sp-\d+\.png$/.test(img)
