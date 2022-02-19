@@ -39,7 +39,10 @@ app.get("/link", (req, res) => {
     if (ip.startsWith("::ffff:")) ip = ip.substring(7);
     // avoid some funny request forgery business
     if (!(IPv4.test(ip) || IPv6.test(ip)))
-        return void res.status(400).send("Invalid IP");
+        return void (
+            console.log(`invalid ip: ${ip}`)! ||
+            res.status(400).send("Invalid IP")
+        );
 
     const { url, wh } = req.query;
 
