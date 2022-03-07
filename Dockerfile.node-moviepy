@@ -1,0 +1,8 @@
+FROM node:lts
+
+# install  dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y python3 python3-pip ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN pip3 install moviepy
+# change imagemagick security policy
+RUN sed -i 's/rights="none"/rights="read | write"/g' $(find / -name policy.xml | head -1)
