@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   app:
-    build: .
+    image: vbeni/spongebob-ip
     ports:
       - '8000:8000'
     environment:
