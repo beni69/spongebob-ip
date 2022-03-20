@@ -1,8 +1,9 @@
-FROM node:lts
+FROM ubuntu:focal
 
 # install  dependencies
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y python3 python3-pip ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl && (curl -sL https://deb.nodesource.com/setup_16.x | bash -) && apt-get install -y nodejs python3 python3-pip ffmpeg imagemagick && rm -rf /var/lib/apt/lists/*
 RUN pip3 install moviepy
+RUN npm i -g yarn
 # change imagemagick security policy
 RUN sed -i 's/rights="none"/rights="read | write"/g' $(find / -name policy.xml | head -1)
