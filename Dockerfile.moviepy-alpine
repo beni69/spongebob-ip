@@ -1,0 +1,6 @@
+FROM python:3-alpine
+RUN apk add --no-cache build-base curl ffmpeg imagemagick && \
+    # install python dependencies
+    pip3 install --no-cache-dir moviepy && \
+    # change imagemagick security policy
+    sed -i 's/rights="none"/rights="read | write"/g' $(find / -name policy.xml | head -1)
