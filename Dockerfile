@@ -1,18 +1,40 @@
-# see Dockerfile.node-moviepy
-FROM vbeni/node-moviepy
+FROM python:3-slim as base
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends curl ffmpeg imagemagick && \
+    # clear apt cache
+    rm -r /var/lib/apt/lists /var/cache/apt/archives && \
+    # change imagemagick security policy
+    sed -i 's/rights="none"/rights="read | write"/g' $(find / -name policy.xml | head -1) && \
+    # install python dependencies
+    pip3 install --no-cache-dir moviepy && \
+    # install comic sans font
+    mkdir -p /usr/share/fonts/ && curl -o /usr/share/fonts/comic.ttf "https://cdn.karesz.xyz/COMIC.TTF" && fc-cache -f -v
 
-# install comic sans font
-RUN mkdir -p /usr/share/fonts/ && curl -o /usr/share/fonts/comic.ttf "https://cdn.karesz.xyz/COMIC.TTF" && fc-cache -f -v
 
-# install node stuff
+FROM node:lts as pkg
+
+RUN npm i -g pnpm
+
+WORKDIR /src
+COPY package.json .
+COPY pnpm-lock.yaml .
+COPY tsconfig.json .
+
+RUN pnpm install
+
+COPY server.ts .
+
+RUN pnpm build
+RUN pnpm exec pkg . -t node16 -o ./server
+
+
+FROM base as final
+
 WORKDIR /app
-COPY package*.json /app
-COPY yarn.lock /app
-RUN yarn install
+COPY clips ./clips
+COPY video.py .
+COPY --from=pkg /src/server .
 
-# build typescript source code
-COPY . /app
-RUN yarn build
-
+ENV NODE_ENV=production
 EXPOSE 8000
-CMD [ "yarn", "start" ]
+CMD [ "/app/server" ]

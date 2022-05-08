@@ -5,7 +5,7 @@ import express from "express";
 import FormData from "form-data";
 import { createReadStream, readdirSync, rm } from "fs";
 import { nanoid } from "nanoid";
-import { join as joinPath } from "path";
+import { dirname, join as joinPath } from "path";
 
 dotenv.config();
 
@@ -14,12 +14,14 @@ const IPv4 =
     IPv6 =
         /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
 
-const images = readdirSync(joinPath(__dirname, "clips")).filter(img =>
+const PROD = process.env.NODE_ENV === "production",
+    DIRNAME = PROD ? dirname(process.execPath) : __dirname,
+    images = readdirSync(joinPath(DIRNAME, "clips")).filter(img =>
         /^sp-\d+\.png$/.test(img)
     ),
     getRandomImg = () =>
         joinPath(
-            __dirname,
+            DIRNAME,
             "clips",
             images[Math.floor(Math.random() * images.length)]
         );
@@ -51,15 +53,15 @@ app.get("/link", (req, res) => {
             'invalid parameters: generate a link <a href="/">here</a>'
         );
 
-    const out = joinPath(__dirname, nanoid(5) + ".mp4"),
+    const out = joinPath(DIRNAME, nanoid(5) + ".mp4"),
         img = getRandomImg();
 
     console.log(`request received: ${img} ${ip} ${out}`);
 
     // render video
     const p = exec(
-        `python3 ${joinPath(__dirname, "video.py")} "${img}" "${ip}" "${out}"`,
-        { cwd: __dirname },
+        `python3 ${joinPath(DIRNAME, "video.py")} "${img}" "${ip}" "${out}"`,
+        { cwd: DIRNAME },
         (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
