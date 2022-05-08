@@ -22,17 +22,17 @@ COPY tsconfig.json .
 
 RUN pnpm install
 
+COPY public ./public
 COPY server.ts .
 
 RUN pnpm build
-RUN pnpm exec pkg . -t node16 -o ./server
+RUN pnpm exec pkg . -o ./server
 
 
 FROM base as final
 
 WORKDIR /app
 COPY clips ./clips
-COPY public ./public
 COPY video.py .
 COPY --from=pkg /src/server .
 
