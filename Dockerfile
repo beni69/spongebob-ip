@@ -1,6 +1,6 @@
 FROM python:3-slim as base
 RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends curl ffmpeg imagemagick && \
+    apt-get install -y --no-install-recommends curl ffmpeg imagemagick > /dev/null && \
     # clear apt cache
     rm -r /var/lib/apt/lists /var/cache/apt/archives && \
     # change imagemagick security policy
