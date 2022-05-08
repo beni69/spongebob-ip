@@ -32,6 +32,7 @@ FROM base as final
 
 WORKDIR /app
 COPY clips ./clips
+COPY public ./public
 COPY video.py .
 COPY --from=pkg /src/server .
 
